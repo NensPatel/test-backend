@@ -10,7 +10,7 @@ exports.addCategory = async (req, res) => {
 
     const data = await categorySchema.create(createObj);
     await data.save();
-    return res.status(201).send({
+    return res.status(200).send({
       isSuccess: true,
       message: "Category created successfully",
       data,
