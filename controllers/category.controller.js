@@ -1,4 +1,4 @@
-const categorySchema = require("../../models/user/category.model");
+const categorySchema = require("../models/category.model")
 
 exports.addCategory = async (req, res) => {
   const { categoryName, user } = req.body;

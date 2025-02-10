@@ -6,7 +6,7 @@ const {
   getTransaction,
   updateTransaction,
   deleteTransaction
-} = require("../../controllers/user/transaction.controller");
+} = require("../controllers/transaction.controller");
 
 router.post("/addTransaction", addTransaction);
 router.get("/getTransaction", getTransaction);

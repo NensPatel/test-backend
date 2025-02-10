@@ -1,4 +1,4 @@
-const userSchema = require("../../models/user/user.model");
+const userSchema = require("../models/user.model")
 const jwt = require("jsonwebtoken");
 
 exports.verifyTokenUser = async (req, res, next) => {

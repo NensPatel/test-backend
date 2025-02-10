@@ -1,5 +1,5 @@
-const transactionSchema = require("../../models/user/transaction.model");
-const categorySchema = require("../../models/user/category.model");
+const transactionSchema = require("../models/transaction.model");
+const categorySchema = require("../models/category.model")
 
 // Add a transaction
 exports.addTransaction = async (req, res) => {
