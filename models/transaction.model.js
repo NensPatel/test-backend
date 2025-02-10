@@ -14,9 +14,9 @@ const transactionSchema = new mongoose.Schema(
       type: Number,
       trim: true,
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "category",
+    categoryName: {
+      type: String,
+      trim:true,
     },
     type: {
       type: String,

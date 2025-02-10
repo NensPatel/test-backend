@@ -3,22 +3,16 @@ const categorySchema = require("../models/category.model")
 
 // Add a transaction
 exports.addTransaction = async (req, res) => {
-  const { user, title, amount, category, type, date } = req.body;
+  const { user, title, amount, categoryName, type, date } = req.body;
 
   try {
-    const validCategory = await categorySchema.findById(category);
-    if (!validCategory) {
-      return res.status(400).send({
-        isSuccess: false,
-        message: "Invalid category ID",
-      });
-    }
+    
 
     const createObj = {
       user,
       title,
       amount,
-      category,
+      categoryName,
       type,
       date,
     };
@@ -28,7 +22,6 @@ exports.addTransaction = async (req, res) => {
 
     const data = await transactionSchema
       .findById(transaction._id)
-      .populate("category", "categoryName");
 
     return res.status(201).send({
       isSuccess: true,
