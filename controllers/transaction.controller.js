@@ -39,8 +39,8 @@ exports.addTransaction = async (req, res) => {
 exports.getTransaction = async (req, res) => {
   try {
     const data = await transactionSchema
-      .find()
-      .populate("category", "categoryName");
+      .find({})
+      // .populate("category", "categoryName");
     const count = await transactionSchema.countDocuments();
     return res.status(200).send({
       isSuccess: true,
