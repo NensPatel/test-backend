@@ -41,7 +41,7 @@ exports.getTransaction = async (req, res) => {
     }
 
     const data = await transactionSchema.find({userId:(user._id).toString()});
-    const count = await transactionSchema.countDocuments( user._id );
+    const count = await transactionSchema.countDocuments({userId:(user._id).toString()});
 
     return res.status(200).send({
       isSuccess: true,
@@ -119,3 +119,52 @@ exports.deleteTransaction = async (req, res) => {
     });
   }
 };
+
+
+exports.getTransactionByCategoryName = async (req, res) => {
+  try {
+  
+    const categories = await transactionSchema.distinct("categoryName");
+
+    return res.status(200).send({
+      isSuccess: true,
+      message: "Unique categories fetched successfully",
+      categories,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      isSuccess: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+exports.getTransactionsByCategory = async (req, res) => {
+  try {
+    const { categoryName } = req.body;
+
+    if (!categoryName) {
+      return res.status(400).send({
+        isSuccess: false,
+        message: "Category name is required",
+      });
+    }
+
+    const transactions = await transactionSchema.find({ categoryName });
+
+    return res.status(200).send({
+      isSuccess: true,
+      message: "Transactions fetched successfully",
+      totalTransactions: transactions.length,
+      data: transactions,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      isSuccess: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
