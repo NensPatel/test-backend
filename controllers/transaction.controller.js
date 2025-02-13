@@ -2,25 +2,23 @@ const transactionSchema = require("../models/transaction.model");
 
 // Add a transaction
 exports.addTransaction = async (req, res) => {
-  const { user, title, amount, categoryName, type, date } = req.body;
+  const { userId, title, amount, categoryName, type, date } = req.body;
 
   try {
-    
+    // Validate required fields
+    if (!userId || !title || !amount || !categoryName || !type || !date) {
+      return res.status(400).send({
+        isSuccess: false,
+        message: "All fields are required",
+      });
+    }
 
-    const createObj = {
-      user,
-      title,
-      amount,
-      categoryName,
-      type,
-      date,
-    };
+    const createObj = { userId, title, amount, categoryName, type, date };
 
     const transaction = new transactionSchema(createObj);
     await transaction.save();
 
-    const data = await transactionSchema
-      .findById(transaction._id)
+    const data = await transactionSchema.findById(transaction._id);
 
     return res.status(201).send({
       isSuccess: true,
@@ -38,10 +36,19 @@ exports.addTransaction = async (req, res) => {
 
 exports.getTransaction = async (req, res) => {
   try {
-    const data = await transactionSchema
-      .find({})
-      // .populate("category", "categoryName");
-    const count = await transactionSchema.countDocuments();
+    const { userId } = req.params;
+    console.log("User ID:", userId);
+
+    if (!userId) {
+      return res.status(400).send({
+        isSuccess: false,
+        message: "User ID is required",
+      });
+    }
+
+    const data = await transactionSchema.find({ userId });
+    const count = await transactionSchema.countDocuments({ userId });
+
     return res.status(200).send({
       isSuccess: true,
       message: "Transaction fetched successfully",
@@ -56,6 +63,7 @@ exports.getTransaction = async (req, res) => {
     });
   }
 };
+
 
 exports.updateTransaction = async(req, res) =>{
   try {
