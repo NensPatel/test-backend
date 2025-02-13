@@ -1,18 +1,11 @@
 const transactionSchema = require("../models/transaction.model");
+const userSchema = require("../models/user.model");
 
 // Add a transaction
 exports.addTransaction = async (req, res) => {
   const { userId, title, amount, categoryName, type, date } = req.body;
 
   try {
-    // Validate required fields
-    if (!userId || !title || !amount || !categoryName || !type || !date) {
-      return res.status(400).send({
-        isSuccess: false,
-        message: "All fields are required",
-      });
-    }
-
     const createObj = { userId, title, amount, categoryName, type, date };
 
     const transaction = new transactionSchema(createObj);
@@ -36,18 +29,19 @@ exports.addTransaction = async (req, res) => {
 
 exports.getTransaction = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log("User ID:", userId);
+    const { email } = req.body;
 
-    if (!userId) {
-      return res.status(400).send({
+    const user = await userSchema.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send({
         isSuccess: false,
-        message: "User ID is required",
+        message: "User not found",
       });
     }
 
-    const data = await transactionSchema.find({ userId });
-    const count = await transactionSchema.countDocuments({ userId });
+    const data = await transactionSchema.find({userId:(user._id).toString()});
+    const count = await transactionSchema.countDocuments( user._id );
 
     return res.status(200).send({
       isSuccess: true,
@@ -64,26 +58,27 @@ exports.getTransaction = async (req, res) => {
   }
 };
 
-
-exports.updateTransaction = async(req, res) =>{
+exports.updateTransaction = async (req, res) => {
   try {
-    const {id} = req.params;
-    const updatedData = {...req.body};
+    const { id } = req.params;
+    const updatedData = { ...req.body };
 
     const transaction = await transactionSchema.findById(id);
-    if(!transaction){
+    if (!transaction) {
       return res.status(404).send({
         isSuccess: false,
         message: "Transaction data not found",
-      })
+      });
     }
 
-    const data = await transactionSchema.findByIdAndUpdate(id, updatedData, {new:true});
+    const data = await transactionSchema.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
     return res.status(200).send({
       isSuccess: true,
       message: "Transaction updated successfully",
-      data
-    })
+      data,
+    });
   } catch (error) {
     return res.status(500).send({
       isSuccess: false,
@@ -91,32 +86,31 @@ exports.updateTransaction = async(req, res) =>{
       error: error.message,
     });
   }
-}
+};
 
-exports.deleteTransaction = async(req, res) =>{
+exports.deleteTransaction = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const transaction = await transactionSchema.findById(id);
-    if(!transaction){
+    if (!transaction) {
       return res.status(404).send({
         isSuccess: false,
         message: "Transaction data not found",
-      })
+      });
     }
 
     const deletedTransaction = await transactionSchema.findByIdAndDelete(id);
-    if(!deletedTransaction){
+    if (!deletedTransaction) {
       return res.status(404).send({
         isSuccess: false,
         message: "Transaction data not found",
-      })
+      });
     }
 
     return res.status(200).send({
       isSuccess: true,
       message: "Transaction deleted successfully",
     });
-    
   } catch (error) {
     return res.status(500).send({
       isSuccess: false,
@@ -124,4 +118,4 @@ exports.deleteTransaction = async(req, res) =>{
       error: error.message,
     });
   }
-}
+};
